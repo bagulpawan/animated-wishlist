@@ -1,20 +1,33 @@
-name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages (gh-pages)
+
+# run on pushes to main
 on:
   push:
     branches:
       - main
 
+# allow writing to repository contents so GITHUB_TOKEN can push to gh-pages
+permissions:
+  contents: write
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node (for potential build)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # (optional) build step placeholder if you later add a build process
+      - name: Setup Node (optional, safe to keep)
         uses: actions/setup-node@v4
         with:
           node-version: '18'
+
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .   # adjust if your site output is in a subfolder
+          publish_dir: .
+          # if you want a custom domain, add cname: 'example.com'
