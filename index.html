@@ -68,7 +68,7 @@
 </head>
 <body>
     <audio id="jingle-music" autoplay loop muted volume="0.3">
-        <source src="https://assets.mixkit.co/audios/free/mp3/442.mp3" type="audio/mp3">
+    <source src="https://assets.mixkit.co/audios/free/mp3/442.mp3" type="audio/mp3">
     Your browser does not support the audio element.
   </audio>
 
@@ -150,27 +150,27 @@
     function confettiDraw(){ confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); for(let i=confettiParts.length-1;i>=0;i--){ const p=confettiParts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.24; p.ttl--; confCtx.save(); confCtx.translate(p.x,p.y); confCtx.rotate(p.ttl/7); confCtx.fillStyle=p.color; confCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size); confCtx.restore(); if(p.y>innerHeight+50||p.ttl<0) confettiParts.splice(i,1);} requestAnimationFrame(confettiDraw); } confettiDraw();
     document.querySelector('header').addEventListener('dblclick', ()=>confettiBurst());
 
-    // --- ADDED SCRIPT FOR MUSIC ---
-    // The `autoplay` and `muted` attributes help with browser restrictions.
+    // --- SCRIPT FOR MUSIC: Unmuting on user interaction ---
     const audioEl = document.getElementById('jingle-music');
     audioEl.volume = 0.3; // Set a low default volume
     
-    // Attempt to play unmuted on any user interaction (to bypass modern browser autoplay restrictions)
-    document.querySelector('header').addEventListener('dblclick', ()=>{
+    // Function to attempt unmuting and playing
+    function attemptUnmute() {
       if(audioEl.muted) {
         audioEl.muted = false;
         audioEl.play().catch(e => console.log("Audio playback blocked:", e));
       }
+    }
+
+    // Attempt unmuting on double-click (tied to confetti)
+    document.querySelector('header').addEventListener('dblclick', attemptUnmute);
+
+    // Attempt unmuting on the very first click anywhere on the document
+    document.addEventListener('click', function unmuteOnce(){
+      attemptUnmute();
+      document.removeEventListener('click', unmuteOnce); // Only need to try once
     });
-    // Also try to play/unmute on the first click anywhere on the document
-    document.addEventListener('click', function unmute(){
-      if(audioEl.muted) {
-        audioEl.muted = false;
-        audioEl.play().catch(e => console.log("Audio playback blocked:", e));
-      }
-      document.removeEventListener('click', unmute); // Only need to try once
-    });
-    // ------------------------------
+    // -----------------------------------------------------
 
 
     // =========================
