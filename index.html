@@ -1,24 +1,26 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>✨ Festive Wishlist — Clean Preview</title>
+  <title>✨ Festive Wishlist — Snowy Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg-1:#061025; --bg-2:#19233a;
       --accent:#e63946; --pink:#ff8fab; --green:#1b7a2f;
-      --muted:rgba(255,255,255,0.8); --muted-2:rgba(6,32,53,0.6);
+      --muted:rgba(255,255,255,0.9); --muted-2:rgba(6,32,53,0.6);
       --maxw:1100px;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Poppins,system-ui,-apple-system;background:radial-gradient(900px 400px at 10% 10%, rgba(255,255,255,0.02), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--muted);-webkit-font-smoothing:antialiased}
+    html,body{height:100%;margin:0;font-family:Poppins,system-ui,-apple-system;background:
+      radial-gradient(900px 400px at 10% 10%, rgba(255,255,255,0.02), transparent),
+      linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--muted);-webkit-font-smoothing:antialiased}
 
     /* Shell */
-    .shell{max-width:var(--maxw);margin:32px auto;padding:26px;border-radius:18px;position:relative;overflow:hidden;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));box-shadow:0 30px 80px rgba(2,6,23,0.55)}
+    .shell{max-width:var(--maxw);margin:32px auto;padding:26px;border-radius:18px;position:relative;overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.006));
+      box-shadow:0 30px 80px rgba(2,6,23,0.55)}
 
     header{display:flex;gap:18px;align-items:center}
     .logo{width:86px;height:86px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 18px 40px rgba(0,0,0,0.4)}
@@ -39,28 +41,33 @@
     .btn{background:linear-gradient(90deg,var(--green),#37b87b);border:none;color:white;padding:10px 12px;border-radius:10px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
     .ghost{background:transparent;border:1px solid rgba(6,32,53,0.06);padding:8px;border-radius:10px;cursor:pointer}
 
-    /* subtle entrance */
-    .item{opacity:0;transform:translateX(-20px) scale(.995)}
-    .item.show{opacity:1;transform:none;transition:all .5s cubic-bezier(.2,.9,.3,1)}
-    .item:hover{transform:translateY(-8px) scale(1.01);box-shadow:0 34px 80px rgba(2,6,23,0.18)}
-
-    /* decorative */
-    .tree{position:absolute;right:-90px;top:40px;opacity:.06;transform:rotate(-8deg);width:480px}
-    .sparkle{position:absolute;right:18px;top:18px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 0 10px rgba(255,255,255,0.6);animation:float 2.8s linear infinite}
-    @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
-
-    /* snow (simple) */
-    .snow{pointer-events:none;position:fixed;inset:0;z-index:6}
-    .snow i{position:absolute;display:block;width:6px;height:6px;background:rgba(255,255,255,0.86);border-radius:50%;opacity:.95;animation:fall linear infinite}
-
     footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;color:rgba(255,255,255,0.9)}
 
+    /* decorative & snow layering */
+    .tree{position:absolute;right:-90px;top:40px;opacity:.06;transform:rotate(-8deg);width:480px;pointer-events:none}
+    .sparkle{position:absolute;right:18px;top:18px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 0 10px rgba(255,255,255,0.6);animation:float 2.8s linear infinite;pointer-events:none}
+    @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
+
+    /* canvas overlay(s) */
+    .snow-canvas { position:fixed; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:40; mix-blend-mode:screen; }
+    .snow-fg { z-index:45; mix-blend-mode:normal; opacity:0.95; } /* slightly brighter foreground */
+
+    /* gentle ground fade to mimic accumulation */
+    .ground-fade {
+      position:fixed; left:0; right:0; bottom:0; height:120px; pointer-events:none; z-index:46;
+      background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.12));
+      mix-blend-mode:screen;
+    }
+
+    /* reduced motion: hide canvas animations */
+    @media (prefers-reduced-motion: reduce) {
+      .snow-canvas, .snow-fg, .ground-fade { display:none !important; }
+    }
     @media (max-width:980px){.tree{display:none}}
   </style>
 </head>
-
 <body>
-  <div class="shell" id="app">
+  <div class="shell" id="app" aria-live="polite">
     <svg class="tree" viewBox="0 0 200 300" aria-hidden>
       <g fill="#ffffff"><path d="M100 10 L40 110 L160 110 Z" opacity="0.9"></path><path d="M100 60 L30 150 L170 150 Z" opacity="0.9"></path><path d="M100 110 L20 190 L180 190 Z" opacity="0.95"></path></g>
     </svg>
@@ -75,14 +82,13 @@
       <div class="logo" aria-hidden>🎁</div>
       <div>
         <h1>My Holiday Wishlist</h1>
-        <div class="sub">A clean, read-only preview</div>
+        <div class="sub">A snowy, read-only preview — double-click header to celebrate</div>
       </div>
       <div class="sparkle" aria-hidden></div>
     </header>
 
     <div class="content">
-      <main class="list" id="list"></main>
-
+      <main class="list" id="list" aria-label="Wishlist items"></main>
       <footer>
         <div>Made with care • 🎄</div>
         <div style="font-size:13px">December 2025</div>
@@ -90,11 +96,19 @@
     </div>
   </div>
 
-  <div class="snow" id="snow"></div>
-  <canvas id="confetti" style="position:fixed;left:0;top:0;pointer-events:none;width:100%;height:100%;z-index:9"></canvas>
+  <!-- Layered canvas snow: back (slow), mid, front (fast) -->
+  <canvas id="snow-back" class="snow-canvas"></canvas>
+  <canvas id="snow-mid" class="snow-canvas"></canvas>
+  <canvas id="snow-front" class="snow-canvas snow-fg"></canvas>
+
+  <!-- subtle ground fade to suggest accumulation -->
+  <div class="ground-fade" aria-hidden="true"></div>
+
+  <!-- existing confetti canvas (kept) -->
+  <canvas id="confetti" style="position:fixed;left:0;top:0;pointer-events:none;width:100%;height:100%;z-index:50"></canvas>
 
   <script>
-    // --- data (read-only preview) ---
+    // --- static wishlist data ---
     const items = [
       { name: 'Marshal Tech Kit Organiser - Blue', url: 'https://www.dailyobjects.com/marshal-tech-kit-organiser-leatherite-blue/dp?f=pid~BLU-MARSAL-TECH-KIT-LTHRT', emoji: '🧰' },
       { name: 'Apple AirTag', url: 'https://www.apple.com/in/airtag/', emoji: '📍' },
@@ -102,61 +116,193 @@
       { name: 'AirPods 4', url: 'https://www.apple.com/in/airpods-4/', emoji: '🎧' }
     ];
 
-    // --- DOM ---
+    // render items (read-only)
     const listEl = document.getElementById('list');
-
     function makeItem(it, i){
       const el = document.createElement('article'); el.className='item'; el.setAttribute('role','article');
-
       const em = document.createElement('div'); em.className='emoji'; em.textContent = it.emoji || '🎁';
       const meta = document.createElement('div'); meta.className='meta';
       const h = document.createElement('h3'); h.textContent = it.name;
       const p = document.createElement('p'); p.textContent = it.url ? new URL(it.url).hostname.replace('www.','') : '— no link —';
       meta.appendChild(h); meta.appendChild(p);
-
       const ctr = document.createElement('div'); ctr.className='controls';
       const buy = document.createElement('a'); buy.className='btn'; buy.textContent = it.url? 'Buy' : 'View'; buy.href = it.url || '#'; buy.target='_blank'; buy.rel='noopener noreferrer';
-
-      // copy url button kept (still useful)
       const copy = document.createElement('button'); copy.className='ghost'; copy.title='Copy URL'; copy.textContent='Copy';
-      copy.addEventListener('click', async ()=>{
-        if(!it.url) return alert('No URL to copy');
-        try{ await navigator.clipboard.writeText(it.url); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200);}catch(e){alert('Copy failed');}
-      });
-
+      copy.addEventListener('click', async ()=>{ if(!it.url) return alert('No URL to copy'); try{ await navigator.clipboard.writeText(it.url); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200);}catch(e){alert('Copy failed');} });
       ctr.appendChild(buy); ctr.appendChild(copy);
-
       el.appendChild(em); el.appendChild(meta); el.appendChild(ctr);
-
-      // mouse tilt
       el.addEventListener('mousemove', e=>{ const r=el.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width; const y=(e.clientY-r.top)/r.height; el.style.transform = `translateY(${(1-y)*-8}px) rotateX(${(0.5-y)*3}deg) rotateY(${(x-0.5)*8}deg)`; });
       el.addEventListener('mouseleave', ()=> el.style.transform='');
-
       setTimeout(()=> el.classList.add('show'), 80 * i);
       return el;
     }
-
-    function render(){
-      listEl.innerHTML='';
-      items.forEach((it,i)=> listEl.appendChild(makeItem(it,i)));
-    }
-
+    function render(){ listEl.innerHTML=''; items.forEach((it,i)=> listEl.appendChild(makeItem(it,i))); }
     render();
 
-    // confetti (celebrate on header double-click)
-    const canvas = document.getElementById('confetti'); const ctx = canvas.getContext('2d');
-    function fit(){canvas.width=innerWidth;canvas.height=innerHeight;} window.addEventListener('resize', fit); fit();
-    let parts=[]; function burst(){ for(let i=0;i<90;i++){ parts.push({x:innerWidth/2 + (Math.random()-0.5)*400,y:160+Math.random()*80,vx:(Math.random()-0.5)*8,vy:Math.random()*8+2,size:6+Math.random()*8,color:`hsl(${Math.random()*360} 80% 60%)`,ttl:140+Math.random()*120}) } }
-    function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=parts.length-1;i>=0;i--){const p=parts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.24; p.ttl--; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.ttl/7); ctx.fillStyle=p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size); ctx.restore(); if(p.y>innerHeight+50||p.ttl<0) parts.splice(i,1); } requestAnimationFrame(draw);} draw();
-    document.querySelector('header').addEventListener('dblclick', ()=>burst());
+    // --- Confetti (kept) ---
+    const confCanvas = document.getElementById('confetti'), confCtx = confCanvas.getContext('2d');
+    function fitConf(){ confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
+    window.addEventListener('resize', fitConf); fitConf();
+    let confettiParts = [];
+    function confettiBurst(){ for(let i=0;i<90;i++){ confettiParts.push({x:innerWidth/2 + (Math.random()-0.5)*400,y:160+Math.random()*80,vx:(Math.random()-0.5)*8,vy:Math.random()*8+2,size:6+Math.random()*8,color:`hsl(${Math.random()*360} 80% 60%)`,ttl:140+Math.random()*120}) } }
+    function confettiDraw(){ confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); for(let i=confettiParts.length-1;i>=0;i--){ const p=confettiParts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.24; p.ttl--; confCtx.save(); confCtx.translate(p.x,p.y); confCtx.rotate(p.ttl/7); confCtx.fillStyle=p.color; confCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size); confCtx.restore(); if(p.y>innerHeight+50||p.ttl<0) confettiParts.splice(i,1);} requestAnimationFrame(confettiDraw); } confettiDraw();
+    document.querySelector('header').addEventListener('dblclick', ()=>confettiBurst());
 
-    // gentle snow
-    const snow = document.getElementById('snow');
-    function makeSnow(n=80){ for(let i=0;i<n;i++){ const s=document.createElement('i'); const x=Math.random()*100; const dur=6+Math.random()*12; s.style.left=`${x}%`; s.style.top=`-${Math.random()*20}%`; s.style.opacity=0.6+Math.random()*0.4; s.style.transform=`scale(${0.6+Math.random()*1.2})`; s.style.animationDuration=`${dur}s`; s.style.animationDelay=`${Math.random()*5}s`; snow.appendChild(s);} } makeSnow(90);
+    // =========================
+    // Layered Canvas Snow System
+    // =========================
+    // Snow respects prefers-reduced-motion: if reduced, canvas will be disabled (CSS hides)
+    (function(){
+      const back = document.getElementById('snow-back');
+      const mid = document.getElementById('snow-mid');
+      const front = document.getElementById('snow-front');
+      const layers = [
+        {canvas: back, countFactor: 0.35, sizeRange:[1,3], speed:0.3, alpha:0.35, blur:0.5},
+        {canvas: mid, countFactor: 0.6, sizeRange:[2,5], speed:0.6, alpha:0.7, blur:0.25},
+        {canvas: front, countFactor: 1.0, sizeRange:[3,8], speed:1.2, alpha:1.0, blur:0}
+      ];
 
-    // reduced motion
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ document.querySelectorAll('.item').forEach(c=>c.style.transition='none'); }
+      class Snow {
+        constructor(canvas, opts){
+          this.canvas = canvas;
+          this.ctx = canvas.getContext('2d');
+          this.opts = opts;
+          this.flakes = [];
+          this.width = innerWidth;
+          this.height = innerHeight;
+          this.wind = 0; // will be animated
+          this.t = 0;
+          this.init();
+        }
+        init(){
+          this.resize();
+          const targetCount = Math.round((this.width/1000) * 120 * this.opts.countFactor);
+          for(let i=0;i<targetCount;i++){ this.flakes.push(this.createFlake(true)); }
+        }
+        resize(){
+          this.width = innerWidth; this.height = innerHeight;
+          const ratio = window.devicePixelRatio || 1;
+          this.canvas.width = Math.round(this.width * ratio);
+          this.canvas.height = Math.round(this.height * ratio);
+          this.canvas.style.width = this.width + 'px';
+          this.canvas.style.height = this.height + 'px';
+          this.ctx.setTransform(ratio,0,0,ratio,0,0);
+        }
+        createFlake(offscreen=false){
+          const s = rand(this.opts.sizeRange[0], this.opts.sizeRange[1]);
+          const x = offscreen ? rand(0, this.width) : rand(-50, this.width+50);
+          const y = offscreen ? rand(0, this.height) : rand(-200, -20);
+          const vx = rand(-0.6, 0.6);
+          const vy = rand(0.4, 1.0) * this.opts.speed;
+          const sway = rand(10, 120);
+          const phase = Math.random()*Math.PI*2;
+          const twinkle = Math.random() > 0.86; // some twinkle
+          return {x,y,vx,vy,s,sway,phase,twinkle,alpha:this.opts.alpha};
+        }
+        step(dt){
+          this.t += dt;
+          // gentle wind oscillation
+          this.wind = Math.sin(this.t * 0.0004 + (this.opts.countFactor*2)) * (0.6 + this.opts.countFactor*0.8);
+          // occasionally gust
+          if(Math.random() < 0.002) this.wind += rand(-2,2);
+          for(let fl of this.flakes){
+            fl.phase += 0.02 * fl.s;
+            fl.x += fl.vx + this.wind * 0.5;
+            fl.y += fl.vy + Math.sin(fl.phase)/20;
+            // sideways sway
+            fl.x += Math.sin((this.t*0.001) + fl.phase) * (fl.sway/200);
+            // twinkle: alpha variation
+            if(fl.twinkle) fl.alpha = this.opts.alpha * (0.6 + 0.4*Math.abs(Math.sin(this.t*0.005 + fl.phase)));
+            // recycle
+            if(fl.y > this.height + 30 || fl.x < -80 || fl.x > this.width + 80){
+              const idx = this.flakes.indexOf(fl);
+              this.flakes[idx] = this.createFlake(false);
+              this.flakes[idx].y = -rand(10,120); // re-enter from top
+            }
+          }
+        }
+        draw(){
+          const ctx = this.ctx;
+          ctx.clearRect(0,0,this.width,this.height);
+          if(this.opts.blur) ctx.filter = `blur(${this.opts.blur}px)`;
+          for(let fl of this.flakes){
+            ctx.globalAlpha = fl.alpha;
+            // soft radial flake
+            const g = ctx.createRadialGradient(fl.x, fl.y, 0, fl.x, fl.y, fl.s*2.6);
+            g.addColorStop(0, `rgba(255,255,255,1)`);
+            g.addColorStop(0.6, `rgba(255,255,255,0.85)`);
+            g.addColorStop(1, `rgba(255,255,255,0)`);
+            ctx.fillStyle = g;
+            ctx.beginPath();
+            ctx.arc(fl.x, fl.y, fl.s, 0, Math.PI*2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          if(this.opts.blur) ctx.filter = 'none';
+        }
+      }
+
+      function rand(a,b){ return a + Math.random()*(b-a); }
+
+      // create instances
+      const snowLayers = layers.map(l => new Snow(l.canvas, l));
+
+      // handle resize
+      function resizeAll(){ snowLayers.forEach(s => s.resize()); }
+      window.addEventListener('resize', resizeAll);
+
+      // animation loop
+      let last = performance.now();
+      function loop(now){
+        const dt = now - last; last = now;
+        for(let s of snowLayers){ s.step(dt); s.draw(); }
+        requestAnimationFrame(loop);
+      }
+      // start only if not reduced motion
+      if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        requestAnimationFrame(loop);
+      }
+    })();
+
+    // =========================
+    // gentle CSS snow fallback (for very small browsers) - also used to build a sense of depth
+    // (We still used the layered canvases above; this is an unobtrusive fallback)
+    (function(){
+      const snowHolder = document.getElementById('list').parentNode;
+      // we will not add DOM snow for reduced motion
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      // add a few tiny sparkle elements that slowly drift (decorative)
+      for(let i=0;i<18;i++){
+        const el = document.createElement('i');
+        el.style.position = 'absolute';
+        el.style.left = (Math.random()*90+5)+'%';
+        el.style.top = (Math.random()*80+5)+'%';
+        el.style.width = el.style.height = (2 + Math.random()*6) + 'px';
+        el.style.background = 'rgba(255,255,255,0.9)';
+        el.style.borderRadius = '50%';
+        el.style.boxShadow = '0 0 8px rgba(255,255,255,0.6)';
+        el.style.opacity = 0.9*Math.random()+0.1;
+        el.style.pointerEvents = 'none';
+        el.style.animation = `drift ${(10+Math.random()*18).toFixed(1)}s linear infinite`;
+        el.style.zIndex = 48;
+        snowHolder.appendChild(el);
+      }
+      // add keyframes dynamically
+      const style = document.createElement('style');
+      style.textContent = `@keyframes drift { 0%{transform:translateY(0px) translateX(0px);} 50%{transform:translateY(20px) translateX(15px);} 100%{transform:translateY(0px) translateX(0px);} }`;
+      document.head.appendChild(style);
+    })();
+
+    // Respect reduced-motion - small note for screen readers
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      const note = document.createElement('div');
+      note.style.position='absolute'; note.style.left='12px'; note.style.top='12px'; note.style.fontSize='12px'; note.style.color='rgba(255,255,255,0.85)';
+      note.textContent = 'Animations reduced per system preference';
+      document.body.appendChild(note);
+    }
+
+    // reduced-motion already hides canvases via CSS; no further action needed.
+
   </script>
 </body>
-
 </html>
