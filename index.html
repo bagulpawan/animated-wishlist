@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>✨ Festive Wishlist — Snowy Edition</title>
+  <title>✨ Festive Wishlist — Static Edition</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Mountains+of+Christmas:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -32,7 +32,12 @@
     .list{display:flex;flex-direction:column;gap:14px}
 
     /* wishlist item */
-    .item{display:flex;gap:12px;align-items:center;padding:14px;border-radius:14px;background:linear-gradient(180deg,#fff,#fafafa);box-shadow:0 18px 40px rgba(2,6,23,0.08);position:relative;overflow:hidden}
+    .item{display:flex;gap:12px;align-items:center;padding:14px;border-radius:14px;background:linear-gradient(180deg,#fff,#fafafa);box-shadow:0 18px 40px rgba(2,6,23,0.08);position:relative;overflow:hidden; 
+          /* Static state, no hover effects */
+          transition: none;
+          transform: none;
+        }
+
     .item .emoji{width:68px;height:68px;border-radius:12px;background:linear-gradient(180deg,#fff,#f6f6f6);display:flex;align-items:center;justify-content:center;font-size:30px}
     .meta h3{margin:0;font-size:17px;color:#062033}
     .meta p{margin:6px 0 0 0;font-size:13px;color:var(--muted-2)}
@@ -43,49 +48,39 @@
 
     footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;color:rgba(255,255,255,0.9)}
 
-    /* decorative & snow layering */
+    /* decorative & static elements */
     .tree{position:absolute;right:-90px;top:40px;opacity:.06;transform:rotate(-8deg);width:480px;pointer-events:none}
-    .sparkle{position:absolute;right:18px;top:18px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.9);box-shadow:0 0 10px rgba(255,255,255,0.6);animation:float 2.8s linear infinite;pointer-events:none}
-    @keyframes float{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
-
-    /* canvas overlay(s) */
-    .snow-canvas { position:fixed; left:0; top:0; width:100%; height:100%; pointer-events:none; z-index:40; mix-blend-mode:screen; }
-    .snow-fg { z-index:45; mix-blend-mode:normal; opacity:0.95; } /* slightly brighter foreground */
-
-    /* gentle ground fade to mimic accumulation */
-    .ground-fade {
-      position:fixed; left:0; right:0; bottom:0; height:120px; pointer-events:none; z-index:46;
-      background: linear-gradient(180deg, rgba(255,255,255,0.0), rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.12));
-      mix-blend-mode:screen;
-    }
-
-    /* reduced motion: hide canvas animations */
-    @media (prefers-reduced-motion: reduce) {
-      .snow-canvas, .snow-fg, .ground-fade { display:none !important; }
-    }
+    .fairy { /* Static fairy lights */
+        display:flex; gap:8px; margin-bottom:8px;
+    }
+    .light { /* Static lights */
+        width:10px; height:10px; border-radius:50%;
+        background: var(--accent);
+        box-shadow:0 0 8px rgba(230,57,70,0.6);
+    }
     @media (max-width:980px){.tree{display:none}}
   </style>
 </head>
 <body>
-    <div class="shell" id="app" aria-live="polite">
+
+  <div class="shell" id="app" aria-live="polite">
     <svg class="tree" viewBox="0 0 200 300" aria-hidden>
       <g fill="#ffffff"><path d="M100 10 L40 110 L160 110 Z" opacity="0.9"></path><path d="M100 60 L30 150 L170 150 Z" opacity="0.9"></path><path d="M100 110 L20 190 L180 190 Z" opacity="0.95"></path></g>
     </svg>
 
-    <div class="fairy" aria-hidden style="display:flex;gap:8px;margin-bottom:8px">
-      <div class="light" style="width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px rgba(230,57,70,0.6);animation:glow 1.6s infinite"></div>
-      <div class="light" style="width:10px;height:10px;border-radius:50%;background:var(--pink);box-shadow:0 0 8px rgba(255,139,171,0.6);animation:glow 1.8s .12s infinite"></div>
-      <div class="light" style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(27,122,47,0.5);animation:glow 1.4s .28s infinite"></div>
+    <div class="fairy" aria-hidden>
+            <div class="light" style="background:var(--accent);box-shadow:0 0 8px rgba(230,57,70,0.6)"></div>
+      <div class="light" style="background:var(--pink);box-shadow:0 0 8px rgba(255,139,171,0.6)"></div>
+      <div class="light" style="background:var(--green);box-shadow:0 0 8px rgba(27,122,47,0.5)"></div>
     </div>
 
     <header>
       <div class="logo" aria-hidden>🎁</div>
       <div>
         <h1>My Holiday Wishlist</h1>
-        <div class="sub">A snowy, read-only preview — double-click header for confetti!</div>
+        <div class="sub">A simple, static read-only preview.</div>
       </div>
-      <div class="sparkle" aria-hidden></div>
-    </header>
+          </header>
 
     <div class="content">
       <main class="list" id="list" aria-label="Wishlist items"></main>
@@ -96,15 +91,7 @@
     </div>
   </div>
 
-    <canvas id="snow-back" class="snow-canvas"></canvas>
-  <canvas id="snow-mid" class="snow-canvas"></canvas>
-  <canvas id="snow-front" class="snow-canvas snow-fg"></canvas>
-
-    <div class="ground-fade" aria-hidden="true"></div>
-
-    <canvas id="confetti" style="position:fixed;left:0;top:0;pointer-events:none;width:100%;height:100%;z-index:50"></canvas>
-
-  <script>
+    <script>
     // --- static wishlist data ---
     const items = [
       { name: 'Marshal Tech Kit Organiser - Blue', url: 'https://www.dailyobjects.com/marshal-tech-kit-organiser-leatherite-blue/dp?f=pid~BLU-MARSAL-TECH-KIT-LTHRT', emoji: '🧰' },
@@ -116,7 +103,9 @@
     // render items (read-only)
     const listEl = document.getElementById('list');
     function makeItem(it, i){
-      const el = document.createElement('article'); el.className='item'; el.setAttribute('role','article');
+      const el = document.createElement('article'); 
+        el.className='item'; 
+        el.setAttribute('role','article');
       const em = document.createElement('div'); em.className='emoji'; em.textContent = it.emoji || '🎁';
       const meta = document.createElement('div'); meta.className='meta';
       const h = document.createElement('h3'); h.textContent = it.name;
@@ -128,176 +117,17 @@
       copy.addEventListener('click', async ()=>{ if(!it.url) return alert('No URL to copy'); try{ await navigator.clipboard.writeText(it.url); copy.textContent='Copied'; setTimeout(()=>copy.textContent='Copy',1200);}catch(e){alert('Copy failed');} });
       ctr.appendChild(buy); ctr.appendChild(copy);
       el.appendChild(em); el.appendChild(meta); el.appendChild(ctr);
-      el.addEventListener('mousemove', e=>{ const r=el.getBoundingClientRect(); const x=(e.clientX-r.left)/r.width; const y=(e.clientY-r.top)/r.height; el.style.transform = `translateY(${(1-y)*-8}px) rotateX(${(0.5-y)*3}deg) rotateY(${(x-0.5)*8}deg)`; });
-      el.addEventListener('mouseleave', ()=> el.style.transform='');
-      setTimeout(()=> el.classList.add('show'), 80 * i);
+      
+      // Removed mousemove/mouseleave listeners for static items
+      
+      // Removed setTimeout for sequenced entry animation
       return el;
     }
-    function render(){ listEl.innerHTML=''; items.forEach((it,i)=> listEl.appendChild(makeItem(it,i))); }
+    function render(){ 
+        listEl.innerHTML=''; 
+        items.forEach((it,i)=> listEl.appendChild(makeItem(it,i))); 
+    }
     render();
-
-    // --- Confetti (kept) ---
-    const confCanvas = document.getElementById('confetti'), confCtx = confCanvas.getContext('2d');
-    function fitConf(){ confCanvas.width = innerWidth; confCanvas.height = innerHeight; }
-    window.addEventListener('resize', fitConf); fitConf();
-    let confettiParts = [];
-    function confettiBurst(){ for(let i=0;i<90;i++){ confettiParts.push({x:innerWidth/2 + (Math.random()-0.5)*400,y:160+Math.random()*80,vx:(Math.random()-0.5)*8,vy:Math.random()*8+2,size:6+Math.random()*8,color:`hsl(${Math.random()*360} 80% 60%)`,ttl:140+Math.random()*120}) } }
-    function confettiDraw(){ confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); for(let i=confettiParts.length-1;i>=0;i--){ const p=confettiParts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.24; p.ttl--; confCtx.save(); confCtx.translate(p.x,p.y); confCtx.rotate(p.ttl/7); confCtx.fillStyle=p.color; confCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size); confCtx.restore(); if(p.y>innerHeight+50||p.ttl<0) confettiParts.splice(i,1);} requestAnimationFrame(confettiDraw); } confettiDraw();
-    document.querySelector('header').addEventListener('dblclick', ()=>confettiBurst());
-
-    // =========================
-    // Layered Canvas Snow System
-    // =========================
-    // Snow respects prefers-reduced-motion: if reduced, canvas will be disabled (CSS hides)
-    (function(){
-      const back = document.getElementById('snow-back');
-      const mid = document.getElementById('snow-mid');
-      const front = document.getElementById('snow-front');
-      const layers = [
-        {canvas: back, countFactor: 0.35, sizeRange:[1,3], speed:0.3, alpha:0.35, blur:0.5},
-        {canvas: mid, countFactor: 0.6, sizeRange:[2,5], speed:0.6, alpha:0.7, blur:0.25},
-        {canvas: front, countFactor: 1.0, sizeRange:[3,8], speed:1.2, alpha:1.0, blur:0}
-      ];
-
-      class Snow {
-        constructor(canvas, opts){
-          this.canvas = canvas;
-          this.ctx = canvas.getContext('2d');
-          this.opts = opts;
-          this.flakes = [];
-          this.width = innerWidth;
-          this.height = innerHeight;
-          this.wind = 0; // will be animated
-          this.t = 0;
-          this.init();
-        }
-        init(){
-          this.resize();
-          const targetCount = Math.round((this.width/1000) * 120 * this.opts.countFactor);
-          for(let i=0;i<targetCount;i++){ this.flakes.push(this.createFlake(true)); }
-        }
-        resize(){
-          this.width = innerWidth; this.height = innerHeight;
-          const ratio = window.devicePixelRatio || 1;
-          this.canvas.width = Math.round(this.width * ratio);
-          this.canvas.height = Math.round(this.height * ratio);
-          this.canvas.style.width = this.width + 'px';
-          this.canvas.style.height = this.height + 'px';
-          this.ctx.setTransform(ratio,0,0,ratio,0,0);
-        }
-        createFlake(offscreen=false){
-          const s = rand(this.opts.sizeRange[0], this.opts.sizeRange[1]);
-          const x = offscreen ? rand(0, this.width) : rand(-50, this.width+50);
-          const y = offscreen ? rand(0, this.height) : rand(-200, -20);
-          const vx = rand(-0.6, 0.6);
-          const vy = rand(0.4, 1.0) * this.opts.speed;
-          const sway = rand(10, 120);
-          const phase = Math.random()*Math.PI*2;
-          const twinkle = Math.random() > 0.86; // some twinkle
-          return {x,y,vx,vy,s,sway,phase,twinkle,alpha:this.opts.alpha};
-        }
-        step(dt){
-          this.t += dt;
-          // gentle wind oscillation
-          this.wind = Math.sin(this.t * 0.0004 + (this.opts.countFactor*2)) * (0.6 + this.opts.countFactor*0.8);
-          // occasionally gust
-          if(Math.random() < 0.002) this.wind += rand(-2,2);
-          for(let fl of this.flakes){
-            fl.phase += 0.02 * fl.s;
-            fl.x += fl.vx + this.wind * 0.5;
-            fl.y += fl.vy + Math.sin(fl.phase)/20;
-            // sideways sway
-            fl.x += Math.sin((this.t*0.001) + fl.phase) * (fl.sway/200);
-            // twinkle: alpha variation
-            if(fl.twinkle) fl.alpha = this.opts.alpha * (0.6 + 0.4*Math.abs(Math.sin(this.t*0.005 + fl.phase)));
-            // recycle
-            if(fl.y > this.height + 30 || fl.x < -80 || fl.x > this.width + 80){
-              const idx = this.flakes.indexOf(fl);
-              this.flakes[idx] = this.createFlake(false);
-              this.flakes[idx].y = -rand(10,120); // re-enter from top
-            }
-          }
-        }
-        draw(){
-          const ctx = this.ctx;
-          ctx.clearRect(0,0,this.width,this.height);
-          if(this.opts.blur) ctx.filter = `blur(${this.opts.blur}px)`;
-          for(let fl of this.flakes){
-            ctx.globalAlpha = fl.alpha;
-            // soft radial flake
-            const g = ctx.createRadialGradient(fl.x, fl.y, 0, fl.x, fl.y, fl.s*2.6);
-            g.addColorStop(0, `rgba(255,255,255,1)`);
-            g.addColorStop(0.6, `rgba(255,255,255,0.85)`);
-            g.addColorStop(1, `rgba(255,255,255,0)`);
-            ctx.fillStyle = g;
-            ctx.beginPath();
-            ctx.arc(fl.x, fl.y, fl.s, 0, Math.PI*2);
-            ctx.fill();
-          }
-          ctx.globalAlpha = 1;
-          if(this.opts.blur) ctx.filter = 'none';
-        }
-      }
-
-      function rand(a,b){ return a + Math.random()*(b-a); }
-
-      // create instances
-      const snowLayers = layers.map(l => new Snow(l.canvas, l));
-
-      // handle resize
-      function resizeAll(){ snowLayers.forEach(s => s.resize()); }
-      window.addEventListener('resize', resizeAll);
-
-      // animation loop
-      let last = performance.now();
-      function loop(now){
-        const dt = now - last; last = now;
-        for(let s of snowLayers){ s.step(dt); s.draw(); }
-        requestAnimationFrame(loop);
-      }
-      // start only if not reduced motion
-      if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-        requestAnimationFrame(loop);
-      }
-    })();
-
-    // =========================
-    // gentle CSS snow fallback (for very small browsers) - also used to build a sense of depth
-    // (We still used the layered canvases above; this is an unobtrusive fallback)
-    (function(){
-      const snowHolder = document.getElementById('list').parentNode;
-      // we will not add DOM snow for reduced motion
-      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      // add a few tiny sparkle elements that slowly drift (decorative)
-      for(let i=0;i<18;i++){
-        const el = document.createElement('i');
-        el.style.position = 'absolute';
-        el.style.left = (Math.random()*90+5)+'%';
-        el.style.top = (Math.random()*80+5)+'%';
-        el.style.width = el.style.height = (2 + Math.random()*6) + 'px';
-        el.style.background = 'rgba(255,255,255,0.9)';
-        el.style.borderRadius = '50%';
-        el.style.boxShadow = '0 0 8px rgba(255,255,255,0.6)';
-        el.style.opacity = 0.9*Math.random()+0.1;
-        el.style.pointerEvents = 'none';
-        el.style.animation = `drift ${(10+Math.random()*18).toFixed(1)}s linear infinite`;
-        el.style.zIndex = 48;
-        snowHolder.appendChild(el);
-      }
-      // add keyframes dynamically
-      const style = document.createElement('style');
-      style.textContent = `@keyframes drift { 0%{transform:translateY(0px) translateX(0px);} 50%{transform:translateY(20px) translateX(15px);} 100%{transform:translateY(0px) translateX(0px);} }`;
-      document.head.appendChild(style);
-    })();
-
-    // Respect reduced-motion - small note for screen readers
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-      const note = document.createElement('div');
-      note.style.position='absolute'; note.style.left='12px'; note.style.top='12px'; note.style.fontSize='12px'; note.style.color='rgba(255,255,255,0.85)';
-      note.textContent = 'Animations reduced per system preference';
-      document.body.appendChild(note);
-    }
-
   </script>
 </body>
 </html>
