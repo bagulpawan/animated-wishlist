@@ -67,12 +67,7 @@
   </style>
 </head>
 <body>
-    <audio id="jingle-music" autoplay loop muted volume="0.3">
-    <source src="https://assets.mixkit.co/audios/free/mp3/442.mp3" type="audio/mp3">
-    Your browser does not support the audio element.
-  </audio>
-
-  <div class="shell" id="app" aria-live="polite">
+    <div class="shell" id="app" aria-live="polite">
     <svg class="tree" viewBox="0 0 200 300" aria-hidden>
       <g fill="#ffffff"><path d="M100 10 L40 110 L160 110 Z" opacity="0.9"></path><path d="M100 60 L30 150 L170 150 Z" opacity="0.9"></path><path d="M100 110 L20 190 L180 190 Z" opacity="0.95"></path></g>
     </svg>
@@ -87,7 +82,7 @@
       <div class="logo" aria-hidden>🎁</div>
       <div>
         <h1>My Holiday Wishlist</h1>
-        <div class="sub">A snowy, read-only preview — double-click header to celebrate</div>
+        <div class="sub">A snowy, read-only preview — double-click header for confetti!</div>
       </div>
       <div class="sparkle" aria-hidden></div>
     </header>
@@ -149,29 +144,6 @@
     function confettiBurst(){ for(let i=0;i<90;i++){ confettiParts.push({x:innerWidth/2 + (Math.random()-0.5)*400,y:160+Math.random()*80,vx:(Math.random()-0.5)*8,vy:Math.random()*8+2,size:6+Math.random()*8,color:`hsl(${Math.random()*360} 80% 60%)`,ttl:140+Math.random()*120}) } }
     function confettiDraw(){ confCtx.clearRect(0,0,confCanvas.width,confCanvas.height); for(let i=confettiParts.length-1;i>=0;i--){ const p=confettiParts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=0.24; p.ttl--; confCtx.save(); confCtx.translate(p.x,p.y); confCtx.rotate(p.ttl/7); confCtx.fillStyle=p.color; confCtx.fillRect(-p.size/2,-p.size/2,p.size,p.size); confCtx.restore(); if(p.y>innerHeight+50||p.ttl<0) confettiParts.splice(i,1);} requestAnimationFrame(confettiDraw); } confettiDraw();
     document.querySelector('header').addEventListener('dblclick', ()=>confettiBurst());
-
-    // --- SCRIPT FOR MUSIC: Unmuting on user interaction ---
-    const audioEl = document.getElementById('jingle-music');
-    audioEl.volume = 0.3; // Set a low default volume
-    
-    // Function to attempt unmuting and playing
-    function attemptUnmute() {
-      if(audioEl.muted) {
-        audioEl.muted = false;
-        audioEl.play().catch(e => console.log("Audio playback blocked:", e));
-      }
-    }
-
-    // Attempt unmuting on double-click (tied to confetti)
-    document.querySelector('header').addEventListener('dblclick', attemptUnmute);
-
-    // Attempt unmuting on the very first click anywhere on the document
-    document.addEventListener('click', function unmuteOnce(){
-      attemptUnmute();
-      document.removeEventListener('click', unmuteOnce); // Only need to try once
-    });
-    // -----------------------------------------------------
-
 
     // =========================
     // Layered Canvas Snow System
@@ -325,8 +297,6 @@
       note.textContent = 'Animations reduced per system preference';
       document.body.appendChild(note);
     }
-
-    // reduced-motion already hides canvases via CSS; no further action needed.
 
   </script>
 </body>
